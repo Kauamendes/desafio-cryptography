@@ -2,6 +2,7 @@ package br.com.kauamendes.cryptography.controller;
 
 import br.com.kauamendes.cryptography.dto.CreateTransactionRequest;
 import br.com.kauamendes.cryptography.dto.TransactionResponse;
+import br.com.kauamendes.cryptography.dto.UpdateTransactionRequest;
 import br.com.kauamendes.cryptography.service.TransactionalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,13 @@ public class TransactionalController {
     public ResponseEntity<Void> create(@RequestBody CreateTransactionRequest request) {
         transactionalService.create(request);
         return ResponseEntity.created(URI.create("/transactions/")).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> update(@PathVariable("id") Long id,
+                                       @RequestBody UpdateTransactionRequest request) {
+        transactionalService.update(id, request);
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping

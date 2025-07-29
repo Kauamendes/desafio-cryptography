@@ -2,13 +2,12 @@ package br.com.kauamendes.cryptography.service;
 
 import br.com.kauamendes.cryptography.dto.CreateTransactionRequest;
 import br.com.kauamendes.cryptography.dto.TransactionResponse;
+import br.com.kauamendes.cryptography.dto.UpdateTransactionRequest;
 import br.com.kauamendes.cryptography.entity.TransactionalEntity;
 import br.com.kauamendes.cryptography.repository.TransactionalRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -44,5 +43,12 @@ public class TransactionalService {
         if (!transactionalRepository.existsById(id))
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         transactionalRepository.deleteById(id);
+    }
+
+    public void update(Long id, UpdateTransactionRequest request) {
+        var entity = transactionalRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        entity.setTransactionalValue(request.value());
+        transactionalRepository.save(entity);
     }
 }
