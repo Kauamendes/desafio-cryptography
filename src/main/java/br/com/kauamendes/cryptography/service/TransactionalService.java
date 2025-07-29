@@ -7,7 +7,10 @@ import br.com.kauamendes.cryptography.repository.TransactionalRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class TransactionalService {
@@ -29,5 +32,17 @@ public class TransactionalService {
     public Page<TransactionResponse> listAll(Pageable pageable) {
         return transactionalRepository.findAll(pageable)
                 .map(TransactionResponse::fromEntity);
+    }
+
+    public TransactionResponse findById(Long id) {
+        var entity = transactionalRepository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+        return TransactionResponse.fromEntity(entity);
+    }
+
+    public void deleteById(Long id) {
+        if (!transactionalRepository.existsById(id))
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        transactionalRepository.deleteById(id);
     }
 }

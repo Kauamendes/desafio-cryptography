@@ -10,6 +10,8 @@ import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
+
 @RestController
 @RequestMapping("/transactions")
 public class TransactionalController {
@@ -23,11 +25,22 @@ public class TransactionalController {
     @PostMapping
     public ResponseEntity<Void> create(@RequestBody CreateTransactionRequest request) {
         transactionalService.create(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.created(URI.create("/transactions/")).build();
     }
 
     @GetMapping
     public ResponseEntity<Page<TransactionResponse>> listAll(@PageableDefault Pageable pageable) {
         return ResponseEntity.ok(transactionalService.listAll(pageable));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TransactionResponse> findById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(transactionalService.findById(id));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteById(@PathVariable("id") Long id) {
+        transactionalService.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }
